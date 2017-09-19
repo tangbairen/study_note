@@ -95,27 +95,64 @@ anyone = rw
 @yanfa = rw
 * =
 
-##SVN 相关命令操作
-
-![](http://i.imgur.com/hSksECJ.jpg)
-
-![](http://i.imgur.com/onNqBPO.jpg)
 
 
-##版本库配置
+# 卸载SVN服务器
 
-![](http://i.imgur.com/kvhhlpE.jpg)
+检查是否安装了低版本的SVN
+
+[root@Linux /]# rpm -qa subversion
+
+如果存储旧版本，卸载旧版本SVN
+
+[root@Linux modules]# yum remove subversion
+
+安装SVN
+
+[root@Linux modules]# yum install subversion
+
+Linux下 利用find命令删除所有.svn目录
+
+	find / -name svn 
 
 
-##SVN 更新 发现冲突
+#MySQL 操作
+	
+	//配置文件
+	sudo vi /etc/mysql/mysql.conf.d/mysqld.cnf
+	
+	1.添加用户
+	    -- all : insert select delete update 
+	    -- *.* : 所有库，所有表
+	    -- %   : 任意地方登录
+	    grant select,insert,update on 库.*（所有表） to 用户名@'localhost'（主机） IDENTIFIED by '123456'（密码）;
+	
+	2.修改用户密码
+	    update `user` set `ysql_native_password` = password('123456') where user = 'bairen';
+	    -- 修改完用户密码后，请刷新
+	    flush privileges;
+	
+	    ubuntu下:update mysql.user set authentication_string=password('123456') where user='bairen';
+	
+	3.删除用户
+	    delete from `user` where `user` = 'bairen';
+	
+	
+	4.让普通用户看不到information_schema库
+	    INFORMATION_SCHEMA是信息数据库，其中保存着关于MySQL服务器所维护的所有其他数据库的信息。在INFORMATION_SCHEMA中，有数个只读表。它们实际上是视图，而不是基本表，因此，你将无法看到与之相关的任何文件。
+	    每位MySQL用户均有权访问这些表，但仅限于表中的特定行，在这类行中含有用户具有恰当访问权限的对象。
+	
+	    在 /etc/phpmyadmin/config.inc.php 加上
+	    $cfg['Servers'][$i]['hide_db'] = 'information_schema';
 
-	[root@localhost demo1]# svn up
-	在 “index.php” 中发现冲突。
-	选择: (p) 推迟，(df) 显示全部差异，(e) 编辑,
-	        (mc) 我的版本, (tc) 他人的版本,
-	        (s) 显示全部选项: 
+	11、开放3306端口
 
+	  [root@root ~]#  firewall-cmd --permanent --add-port=3306/tcp
+	  [root@root ~]#  firewall-cmd --reload
 
+		如果出现 FirewallD is not running	
+		执行：systemctl start firewalld.service 启动防火墙、然后再试
 
+检测svn项目：
 
-
+	svn checkout svn://192.168.0.3/
